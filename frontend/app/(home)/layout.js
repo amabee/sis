@@ -13,6 +13,8 @@ import {
   LogOut,
   Menu,
   ChevronDown,
+  BookLockIcon,
+  CheckCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -52,19 +54,28 @@ export default function DashboardLayout({ children }) {
       showFor: ["admin"],
     },
     {
-      name: "Schedule",
-      href: `/${userType}/schedule`,
-      icon: Calendar,
+      name: "Academic-Settings",
+      href: `/${userType}/academic-settings`,
+      icon: BookLockIcon,
+      showFor: ["admin"],
+    },
+    {
+      name: "Manage-Attendance",
+      href: `/${userType}/manage-attendance`,
+      icon: CheckCheck,
+      showFor: ["admin"],
     },
     {
       name: "Results",
       href: `/${userType}/results`,
       icon: FileText,
+      showFor: ["admin"],
     },
     {
       name: "Settings",
       href: `/${userType}/settings`,
       icon: Settings,
+      showFor: ["admin"],
     },
   ];
 
