@@ -20,7 +20,7 @@ class AUTH
         $this->conn = DatabaseConnection::getInstance()->getConnection();
     }
 
-    public function login($json)
+    public function faculty_login($json)
     {
         $json = json_decode($json, true);
 
@@ -34,30 +34,41 @@ class AUTH
             $user = $json['user'];
             $password = $json['password'];
 
-            $sql = 'SELECT user.user_id, user.userType_id, user.username, user.password, userinfo.*, offices.office_name
-                    FROM user
-                    LEFT JOIN userinfo ON userinfo.user_id = user.user_id
-                    LEFT JOIN offices ON offices.office_id = userinfo.office_id
-                    WHERE (user.username = :user OR userinfo.email = :user) AND is_Active = 1';
+            $sql = "SELECT `UserID`, `Username`, `RoleID`, `Password` FROM `users` 
+                    WHERE Username = :username AND RoleID IN (1, 2)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':user', $user, PDO::PARAM_STR);
+            $stmt->bindParam(':username', $user, PDO::PARAM_STR);
             $stmt->execute();
-
 
             if ($stmt->rowCount() > 0) {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if (!password_verify($password, $user['password'])) {
+                if (!password_verify($password, $user['Password'])) {
                     return json_encode(array("success" => false, "data" => [], "message" => 'Invalid Credentials'));
                 }
 
-                unset($user['password']);
+                unset($user['Password']);
+
+                if ($user['RoleID'] == 1) {
+                    $detailsQuery = "SELECT `AdminID` AS ID, `Name`, `Email`, `Phone`, `UserID` FROM `administrator` WHERE UserID = :userID";
+                } elseif ($user['RoleID'] == 2) {
+                    $detailsQuery = "SELECT `TeacherID` AS ID, `Name`, `Email`, `Phone`, `UserID` FROM `teacher` WHERE UserID = :userID";
+                }
+
+                $stmt = $this->conn->prepare($detailsQuery);
+                $stmt->bindParam(':userID', $user['UserID'], PDO::PARAM_INT);
+                $stmt->execute();
+                $userDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($userDetails) {
+                    $user = array_merge($user, $userDetails);
+                }
+
 
                 $jwt = $this->generateJwt($user);
-
                 $sessionData = $this->createSessionData($user, $jwt);
 
-                $this->insertSession($sessionData);
+                // $this->insertSession($sessionData);
 
                 setcookie('session_token', $jwt, [
                     'expires' => time() + 7200,
@@ -81,26 +92,25 @@ class AUTH
 
                 http_response_code(200);
 
-                return json_encode(array(
+                return json_encode([
                     "success" => true,
                     "data" => [
                         "user" => $user,
                         "token" => $jwt,
                         "session_id" => $sessionData['session_id']
                     ],
-                    "message" => "success"
-                ));
+                    "message" => "Login successful"
+                ]);
             } else {
-
                 http_response_code(401);
                 $this->conn->rollBack();
-                return json_encode(array("success" => false, "data" => [], "message" => 'Invalid Credentials'));
+                return json_encode(["success" => false, "data" => [], "message" => 'Invalid Credentials']);
             }
         } catch (PDOException $e) {
             http_response_code(500);
             $this->conn->rollBack();
             error_log("Database error in login: " . $e->getMessage());
-            return json_encode(array("success" => false, "data" => [], "message" => 'An unexpected error occurred. Please try again later.'));
+            return json_encode(["success" => false, "data" => [], "message" => 'An unexpected error occurred. Please try again later.']);
         }
     }
 
@@ -145,7 +155,7 @@ class AUTH
         $email = $json['email'];
         $username = InputHelper::sanitizeString($json['username']);
         $phoneNumber = InputHelper::sanitizeString($json['phoneNumber']);
-        $bdayFormatted = $bday->format('Y-m-d'); // Ensure the date is properly formatted
+        $bdayFormatted = $bday->format('Y-m-d');
         $gender = $json['gender'];
         $password = password_hash($json['password'], PASSWORD_BCRYPT);
         $userTypeID = 4;
@@ -229,23 +239,22 @@ class AUTH
         }
     }
 
-
     private function generateJwt($user)
     {
         $key = $_ENV['JWT_SECRET'];
         $issuedAt = time();
         $expirationTime = $issuedAt + 7200;
         $payload = [
-            'iss' => 'psa-academy',
+            'iss' => 'alubijidsis',
             'iat' => $issuedAt,
             'exp' => $expirationTime,
-            'sub' => $user['user_id'],
+            'sub' => $user['UserID'],
             'user' => [
-                'id' => $user['user_id'],
-                'username' => $user['username'],
-                'full_name' => $user['first_name'] . $user['middle_name'] . $user['last_name'],
-                'email' => $user['email'],
-                'user_type_id' => $user['userType_id']
+                'id' => $user['UserID'],
+                'username' => $user['Username'],
+                'name' => $user['Name'],
+                'email' => $user['Email'],
+                'role_id' => $user['RoleID']
             ]
         ];
         return JWT::encode($payload, $key, 'HS256');
@@ -263,7 +272,7 @@ class AUTH
 
         return [
             'session_id' => $sessionId,
-            'user_id' => $user['user_id'],
+            'user_id' => $user['UserID'],
             'session_token' => $jwt,
             'ip_address' => $ipAddress,
             'user_agent' => $userAgent,
@@ -352,9 +361,9 @@ if (isset($headers['authorization']) && $headers['authorization'] === $validApiK
 
     if (isset($operation) && isset($json)) {
         switch ($operation) {
-            case "login":
+            case "faculty_login":
                 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-                    echo $auth->login($json);
+                    echo $auth->faculty_login($json);
                 } else {
                     http_response_code(400);
                     echo json_encode(array("success" => false, "data" => [], "message" => "Invalid request method for login. Use POST."));
