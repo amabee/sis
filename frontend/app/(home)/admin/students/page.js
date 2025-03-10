@@ -19,7 +19,7 @@ const mockStudents = [
     id: "STU001",
     name: "Alex Johnson",
     email: "alex.johnson@example.com",
-    program: "Computer Science",
+    educationAttainment: "Computer Science",
     level: "Undergraduate",
     modality: "Face to Face",
     status: "Active",
@@ -41,17 +41,16 @@ export default function ManageStudentsPage() {
   });
   const [filterStatus, setFilterStatus] = useState("all");
 
-  // New student form state
   const [newStudent, setNewStudent] = useState({
     name: "",
     email: "",
-    program: "",
-    level: "Undergraduate",
+    educationAttainment: "",
+    level: "elementary",
     modality: "Face to Face",
     status: "Active",
+    lrn: "",
   });
 
-  // Handle sorting
   const requestSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -60,12 +59,15 @@ export default function ManageStudentsPage() {
     setSortConfig({ key, direction });
   };
 
-  // Add new student
   const handleAddStudent = (e) => {
     e?.preventDefault();
 
-    // Form validation
-    if (!newStudent.name || !newStudent.email || !newStudent.program) {
+    if (
+      !newStudent.name ||
+      !newStudent.email ||
+      !newStudent.educationAttainment ||
+      !newStudent.lrn
+    ) {
       alert("Please fill in all required fields");
       return;
     }
@@ -82,10 +84,11 @@ export default function ManageStudentsPage() {
     setNewStudent({
       name: "",
       email: "",
-      program: "",
-      level: "Undergraduate",
+      educationAttainment: "",
+      level: "elementary",
       modality: "Face to Face",
       status: "Active",
+      lrn: "",
     });
 
     setIsAddStudentOpen(false);
@@ -101,7 +104,7 @@ export default function ManageStudentsPage() {
     if (
       !currentStudent.name ||
       !currentStudent.email ||
-      !currentStudent.program
+      !currentStudent.educationAttainment
     ) {
       alert("Please fill in all required fields");
       return;

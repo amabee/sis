@@ -13,7 +13,7 @@ export function StudentForm({ student, onChange, labelStyle }) {
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
           <label htmlFor="name" className={labelStyle}>
-            Full Name *
+            Full Name (Family Name, Given Name, Middle Name)*
           </label>
           <Input
             id="name"
@@ -38,13 +38,29 @@ export function StudentForm({ student, onChange, labelStyle }) {
         </div>
         <div className="col-span-2">
           <label htmlFor="program" className={labelStyle}>
-            Program *
+            Highest Education Attainment *
           </label>
           <Input
-            id="program"
-            placeholder="Program"
-            value={student.program}
-            onChange={(e) => onChange({ ...student, program: e.target.value })}
+            id="educationAttainment"
+            placeholder="Highest Education Attainment"
+            value={student.educationAttainment}
+            onChange={(e) =>
+              onChange({ ...student, educationAttainment: e.target.value })
+            }
+            required
+          />
+        </div>
+        <div className="col-span-2">
+          <label htmlFor="program" className={labelStyle}>
+            LRN *
+          </label>
+          <Input
+            id="lrn"
+            placeholder="LRN"
+            value={student.lrn}
+            onChange={(e) =>
+              onChange({ ...student, lrn: e.target.value })
+            }
             required
           />
         </div>
@@ -60,8 +76,9 @@ export function StudentForm({ student, onChange, labelStyle }) {
               <SelectValue placeholder="Select level" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Undergraduate">Undergraduate</SelectItem>
-              <SelectItem value="Graduate">Graduate</SelectItem>
+              <SelectItem value="elementary">Elementary</SelectItem>
+              <SelectItem value="highschool">High School</SelectItem>
+              <SelectItem value="blp">BLP</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -83,7 +100,7 @@ export function StudentForm({ student, onChange, labelStyle }) {
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-2">
+        {/* <div className="col-span-2">
           <label htmlFor="status" className={labelStyle}>
             Status
           </label>
@@ -100,7 +117,7 @@ export function StudentForm({ student, onChange, labelStyle }) {
               <SelectItem value="On Leave">On Leave</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
       </div>
     </div>
   );

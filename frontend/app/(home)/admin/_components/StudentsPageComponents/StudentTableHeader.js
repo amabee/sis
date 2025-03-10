@@ -13,7 +13,7 @@ export function StudentTableHeader({ onSort }) {
           </div>
         </TableHead>
         <TableHead>Email</TableHead>
-        <TableHead>Program</TableHead>
+        <TableHead>Highest Education Attainment</TableHead>
         <TableHead>Level</TableHead>
         <TableHead>Modality</TableHead>
         <TableHead className="cursor-pointer" onClick={() => onSort("status")}>

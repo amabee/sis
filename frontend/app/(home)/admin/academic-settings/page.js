@@ -19,13 +19,26 @@ import SubjectManagement from "../_components/AcademicSettingsComponents/Subject
 import ClassAssignment from "../_components/AcademicSettingsComponents/ClassAssignment";
 import SchoolYearManagement from "../_components/AcademicSettingsComponents/SchoolYearManagement";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import AddSchoolYearDialog from "../_components/AcademicSettingsComponents/AddSchoolYearDialog";
+import AddSubjectDialog from "../_components/AcademicSettingsComponents/AddSubjectDialog";
+import CreateClassDialog from "../_components/AcademicSettingsComponents/CreateClassDialog";
 
 const AcademicSettingsPage = () => {
   const [selectedYear, setSelectedYear] = useState("2024-2025");
-
-  // Mock school years for the selector
   const schoolYears = ["2023-2024", "2024-2025", "2025-2026", "2026-2027"];
+
+  const handleAddSchoolYear = (newSchoolYear) => {
+    console.log("New school year added:", newSchoolYear);
+  };
+
+  const handleAddSubject = (newSubject) => {
+    console.log("New subject added:", newSubject);
+  };
+
+  const handleCreateClass = (newClass) => {
+    console.log("New class created:", newClass);
+  };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -75,10 +88,7 @@ const AcademicSettingsPage = () => {
                     Create new school years and manage active years
                   </CardDescription>
                 </div>
-                <Button className="w-full md:w-auto">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Create New School Year
-                </Button>
+                <AddSchoolYearDialog onAddSchoolYear={handleAddSchoolYear} />
               </div>
             </CardHeader>
             <CardContent>
@@ -100,10 +110,10 @@ const AcademicSettingsPage = () => {
                     Create subjects and assign teachers for {selectedYear}
                   </CardDescription>
                 </div>
-                <Button className="w-full md:w-auto">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add New Subject
-                </Button>
+                <AddSubjectDialog
+                  onAddSubject={handleAddSubject}
+                  schoolYear={selectedYear}
+                />
               </div>
             </CardHeader>
             <CardContent>
@@ -123,10 +133,10 @@ const AcademicSettingsPage = () => {
                     {selectedYear}
                   </CardDescription>
                 </div>
-                <Button className="w-full md:w-auto">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Create New Class
-                </Button>
+                <CreateClassDialog
+                  onCreateClass={handleCreateClass}
+                  schoolYear={selectedYear}
+                />
               </div>
             </CardHeader>
             <CardContent>

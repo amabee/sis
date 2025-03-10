@@ -11,7 +11,7 @@ export function StudentTableRow({ student, onEdit, onDelete }) {
         <div className="font-medium">{student.name}</div>
       </TableCell>
       <TableCell>{student.email}</TableCell>
-      <TableCell>{student.program}</TableCell>
+      <TableCell>{student.educationAttainment}</TableCell>
       <TableCell>{student.level}</TableCell>
       <TableCell>{student.modality}</TableCell>
       <TableCell>

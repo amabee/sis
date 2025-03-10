@@ -30,11 +30,10 @@ export async function middleware(request) {
         }
       : null;
 
-    // Modified to use numeric role IDs instead of strings
     const routeConfig = {
       admin: {
         pattern: /^\/admin(\/.*)?$/,
-        allowedTypes: [1], // Changed from "admin" to 1
+        allowedTypes: [1], 
         defaultRedirect: "/admin/",
       },
       faculty: {

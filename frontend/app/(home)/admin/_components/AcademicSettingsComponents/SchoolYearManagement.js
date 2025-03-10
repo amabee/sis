@@ -351,24 +351,24 @@ const SchoolYearManagement = ({ selectedYear, setSelectedYear }) => {
               <AlertCircle className="h-5 w-5 text-red-500" />
               Close School Year
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              {currentSchoolYear && (
-                <>
+
+            {currentSchoolYear && (
+              <>
+                <AlertDialogDescription>
                   Are you sure you want to close the school year{" "}
                   <strong>{currentSchoolYear.name}</strong>?
                   <br />
                   <br />
                   This action is permanent and will:
-                  <ul className="list-disc ml-6 mt-2">
-                    <li>Finalize all academic records for this year</li>
-                    <li>
-                      Prevent further modifications to subjects and classes
-                    </li>
-                    <li>Archive all data associated with this school year</li>
-                  </ul>
-                </>
-              )}
-            </AlertDialogDescription>
+                </AlertDialogDescription>
+
+                <ul className="list-disc ml-6 mt-2 text-sm text-muted-foreground">
+                  <li>Finalize all academic records for this year</li>
+                  <li>Prevent further modifications to subjects and classes</li>
+                  <li>Archive all data associated with this school year</li>
+                </ul>
+              </>
+            )}
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
